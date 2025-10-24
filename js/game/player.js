@@ -25,9 +25,9 @@ var finishGame;
 
 let isBatThrusting = false;
 let batThrustProgress = 0;
-const batThrustDuration = 0.25; // segundos para ida y vuelta (~250 ms)
+const batThrustDuration = 0.25; // segundos para ida y vuelta
 const batStartPos = new THREE.Vector3(-10, 13, 15);
-const batEndPos = new THREE.Vector3(-2, 8, 20); // avanza +4 en Z
+const batEndPos = new THREE.Vector3(-2, 8, 20);
 const batStartRotX = 0.1;
 const batEndRotX = 1.5;
 
@@ -52,7 +52,6 @@ function createPlayer(x, z){
     baseballBat.rotation.x = batStartRotX; // apuntando un poco hacia arriba
     //baseballBat.rotation.z = Math.PI / 2;
     
-    // Añadirlo como hijo de la cámara (siempre solidario)
     player.add(baseballBat);
 
 
@@ -68,7 +67,7 @@ function createPlayer(x, z){
     boxBody.position.x = x;
     boxBody.position.z = z;
     
-    // Evitar que rote (ni por colisiones ni por inercia)
+    // Evitar que rote
     boxBody.fixedRotation = true;
     boxBody.updateMassProperties();
     boxBody.linearDamping = 0.9;
@@ -76,11 +75,11 @@ function createPlayer(x, z){
     world.addBody(boxBody);
     player.body = boxBody;
   
-    // Crear triángulo (flecha del minimapa)
+    // Crear triángulo 
     const arrowShape = new THREE.Shape();
-    const size = WALL_HEIGHT / 3; // tamaño del triángulo
+    const size = WALL_HEIGHT / 3;
   
-    // Definir el triángulo apuntando hacia +Z (ajustable)
+    // Definir el triángulo apuntando hacia +Z
     arrowShape.moveTo(0, size/1.5);
     arrowShape.lineTo(-size / 2, -size / 2);
     arrowShape.lineTo(size / 2, -size / 2);
@@ -93,9 +92,9 @@ function createPlayer(x, z){
   
     // Colocar el triángulo arriba del jugador
     arrowMesh.position.y = WALL_HEIGHT * 2 + (WALL_HEIGHT / 10);
-    arrowMesh.rotation.x = Math.PI / 2; // rotar para que mire hacia arriba en el eje Y
-  
-    // Agregar la flecha como hijo del jugador (seguirá su posición y rotación)
+    arrowMesh.rotation.x = Math.PI / 2;
+
+    // Agregar la flecha como hijo del jugador
     player.add(arrowMesh);
   
     // Guardamos referencia por si quieres manipularla luego
@@ -118,7 +117,7 @@ function createPlayer(x, z){
             // Dirección con un poco de componente vertical para efecto más dramático
             const forceVector = new CANNON.Vec3(
                 pushDirection.x * pushForce,
-                pushDirection.y * pushForce + (pushForce * 0.3), // +30% fuerza vertical
+                pushDirection.y * pushForce + (pushForce * 0.3),
                 pushDirection.z * pushForce
             );
             zombieObj.zombie.body.applyForce(forceVector, zombieObj.zombie.body.position);
@@ -158,7 +157,7 @@ function createFluorescentLight(x, z, intensity, color){
   tube.rotation.z = Math.PI / 2; // horizontal
   tube.position.set(x, WALL_HEIGHT, z);
 
-  // Luz central (fluorescente)
+  // Luz central
   const light = new THREE.PointLight(color, intensity, 200);
   light.castShadow = true;
   light.shadow.mapSize.width = 1024;

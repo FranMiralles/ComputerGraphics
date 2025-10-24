@@ -19,14 +19,14 @@ function createPowerUp(x, z, type) {
     }
   
 
-  // Crear el material básico (visible por ambos lados)
+  // Crear el material básico
   const material = new THREE.MeshBasicMaterial({
     map: texture,
     transparent: true,
     side: THREE.DoubleSide
   });
 
-  // Crear el plano (1x1 unidades, puedes ajustar)
+  // Crear el plano
   const geometry = new THREE.PlaneGeometry(10, 10);
   const healPlane = new THREE.Mesh(geometry, material);
 

@@ -33,7 +33,7 @@ class Zombie {
     this.isAttacking = false;
     this.attackTriggerActive = false;
 
-    this.attackTriggerActiveTime = 0.2; // Reducir tiempo activo (antes era indefinido)
+    this.attackTriggerActiveTime = 0.2; // Reducir tiempo activo
 
 
     this.x = x;
@@ -57,9 +57,9 @@ class Zombie {
     zombiBodies.push(this);
   }
 
-  // ----------------------------------------------------------
-  // CARGA DEL MODELO Y ANIMACIONES
-  // ----------------------------------------------------------
+
+  // Carga del modelo y animaciones
+
   reduceHP(damage) {
     if (this.isDead || !this.canTakeDamage) return;
     this.hp -= damage;
@@ -83,7 +83,7 @@ class Zombie {
     this.body.mass = 0; // ya no se mueve
     this.body.updateMassProperties();
 
-    // Mover el cuerpo lejos para que no estorbe al jugador
+    // Mover el cuerpo lejos
     this.zombie.body.position.y = -20;
 
     // Desactivar ataques
@@ -121,7 +121,7 @@ class Zombie {
           this.fadeToAction(this.idleAction, 0.3);
       }
 
-      // También reposicionar el trigger de ataque fuera del área
+      // Reposicionar el trigger de ataque fuera del área
       if (this.attackTrigger) {
           this.attackTrigger.position.set(0, -35, 0);
       }
@@ -210,9 +210,7 @@ class Zombie {
   }
   
 
-  // ----------------------------------------------------------
-  // CREAR COLLIDER FÍSICO DEL ZOMBI
-  // ----------------------------------------------------------
+  // Collider físico del zombi
   createZombiePhysicsBody() {
     const shape = new CANNON.Box(new CANNON.Vec3(8, 12, 8));
     this.body = new CANNON.Body({
@@ -228,9 +226,7 @@ class Zombie {
     this.zombie.body = this.body;
   }
 
-  // ----------------------------------------------------------
-  // CREAR TRIGGER DE ATAQUE
-  // ----------------------------------------------------------
+  // Trigger de ataque
   createAttackTrigger() {
     const triggerRadius = 8;
     const triggerShape = new CANNON.Sphere(triggerRadius);
@@ -248,9 +244,7 @@ class Zombie {
   }
 
 
-  // ----------------------------------------------------------
-  // TRANSICIÓN ENTRE ANIMACIONES
-  // ----------------------------------------------------------
+  // Animaciones
   fadeToAction(newAction, duration = 0.5) {
     if (!newAction) return;
     if (this.currentAction && this.currentAction !== newAction) {
@@ -268,9 +262,7 @@ class Zombie {
     if (newAction === this.attackAction) this.startAttack();
   }
 
-  // ----------------------------------------------------------
-  // ATAQUE
-  // ----------------------------------------------------------
+  // Ataque
   startAttack() {
     this.isAttacking = true;
     this.attackTimer = 0;
@@ -283,9 +275,7 @@ class Zombie {
     this.attackTriggerActive = false;
   }
 
-  // ----------------------------------------------------------
-  // MEJORA DE ANIMACIÓN
-  // ----------------------------------------------------------
+  // Mejora animación
   enhanceAnimationClip(clip, intensity) {
     clip.tracks.forEach(track => {
       if (track.name.includes('rotation')) {
@@ -301,9 +291,7 @@ class Zombie {
     });
   }
 
-  // ----------------------------------------------------------
-  // MOVIMIENTO DEL ZOMBI
-  // ----------------------------------------------------------
+  // Movimiento zombi
   updateMovement(dx, dz, dir) {
     if (!this.zombie || !this.body) return;
 
@@ -320,13 +308,10 @@ class Zombie {
     }
   }
 
-  // ----------------------------------------------------------
-  // ACTUALIZACIÓN GENERAL
-  // ----------------------------------------------------------
+  // Actualización de cada zombi
   update(delta) {
     if (!this.zombie) return;
 
-    // --- Cooldown de daño ---
     if (!this.canTakeDamage) {
         this.damageTimer += delta;
         if (this.damageTimer >= this.damageCooldown) {
@@ -335,9 +320,8 @@ class Zombie {
         }
     }
 
-    // --- Si está muerto, no hace nada ---
     if (this.isDead) {
-        this.mixer.update(delta); // reproducir animación de muerte
+        this.mixer.update(delta);
         return;
     }
       
@@ -368,7 +352,7 @@ class Zombie {
       }
       this.zombie.position.z = this.body.position.z - 2;
 
-      // --- Lógica del trigger ---
+      // Trigger
       if (this.attackTrigger) {
         if (this.currentAction === this.attackAction && this.isAttacking) {
           this.attackTimer += delta;

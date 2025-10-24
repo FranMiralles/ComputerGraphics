@@ -12,7 +12,6 @@ var attackCooldown = 0;
 var isAttackInProgress = false;
 
 
-// Añade estas variables globales
 var nearestDoor = null;
 var isOpeningDoor = false;
 var doorOpeningSpeed = 15; // Velocidad de apertura
@@ -21,7 +20,6 @@ var doorClosingSpeed = 30;
 
 var roomsGenerated = []
   
-// Event listeners para controles
 document.addEventListener('keydown', (event) => {
     switch (event.code) {
       case 'KeyW':
@@ -47,7 +45,7 @@ document.addEventListener('keydown', (event) => {
           startAttack();
         }
         break;
-      case 'KeyE': // Tecla para abrir puerta
+      case 'KeyE':
         if (nearestDoor && !nearestDoor.isOpen && !isOpeningDoor) {
             openDoor(nearestDoor);
         }
@@ -204,7 +202,7 @@ function updateDoors(delta) {
           const targetY = door.mesh.position.y + doorOpeningSpeed * delta;
           door.mesh.position.y = targetY;
           
-          // Mover también el cuerpo físico
+          // Mover el cuerpo físico
           if (door.body) {
               door.body.position.y = targetY;
           }

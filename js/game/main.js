@@ -90,32 +90,20 @@ function loadScene() {
   const ambient = new THREE.AmbientLight(0x333333, 0.15);
   scene.add(ambient);
 
-  // --- LUZ DIRECCIONAL (luna o luz distante) ---
-  // Baja intensidad y color azulado
-  /*
-  const directional = new THREE.DirectionalLight(0x88aaff, 0.8); // 0.3
-  directional.position.set(10, 20, 10);
+  // Luz direccional
+  
+  const directional = new THREE.DirectionalLight(0x88aaff, 0.1); // 0.3
+  directional.position.set(10, 100, 10);
   directional.castShadow = true;
   scene.add(directional);
-  */
-  // --- Luz roja intensa tipo alarma ---
-  /*
-  redLight = new THREE.PointLight(0xff0000, 2, 250); // color, intensidad, distancia
-  redLight.position.set(-450, WALL_HEIGHT- 10, -470);
-  redLight.castShadow = true;
-  redLight.shadow.mapSize.width = 1024;
-  redLight.shadow.mapSize.height = 1024;
-  scene.add(redLight);
-  */
+  
   flashlight = new THREE.SpotLight(0xffffff, flashlightBaseIntensity, 220, Math.PI / 4.5, 0.8, 2);
   // color, intensidad, distancia, ángulo, penumbra, decaimiento
   flashlight.position.set(-450, 10, -470);
   flashlight.castShadow = true;
   flashlight.shadow.mapSize.width = 1024;
   flashlight.shadow.mapSize.height = 1024;
-
-  // Luz de destino (donde apunta el foco)
-  flashlight.target.position.set(-450 + 10, 1, -470); // mirando hacia +X
+  flashlight.target.position.set(-450 + 10, 1, -470);
   scene.add(flashlight.target);
   scene.add(flashlight);
 
@@ -124,10 +112,10 @@ function loadScene() {
 
   
 
-  // --- NIEBLA ---
+  // Niebla
   scene.fog = new THREE.FogExp2(0x000000, 0.005);
 
-  // --- SOMBRAS ---
+  // Sombras
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -137,7 +125,7 @@ function loadScene() {
   const cols = 3;
   const rooms = createGridRooms(rows, cols, 250, 20);
   farRooms = selectFarRooms(rooms)
-  const sceneData = createConnectingCorridors(rooms, rows, cols); // sceneData.corridors, sceneData.walls, sceneData.connections
+  const sceneData = createConnectingCorridors(rooms, rows, cols)
 
   const ceilingData = createCeiling(rooms, sceneData.corridors)
 
@@ -273,35 +261,27 @@ function setBodyYaw(body, yaw) {
 function update()
 {
   stats.update()
-  // Obtener delta time, sin importar el estado
   delta = clock.getDelta();
-  world.step(1 / 60); // avanza la simulación física
+  world.step(1 / 60);
 
   if (!isPlayerDead && !finishGame){
     updateDoors(delta);
-    // Rotar powerups
     for (let i = powerUps.length - 1; i >= 0; i--) {
       const powerUp = powerUps[i];
       
-      // Rotación del power-up
       powerUp.obj.rotation.y = powerUp.obj.rotation.y + 1 * delta;
       if (powerUp.obj.rotation.y > 2 * Math.PI) {
           powerUp.obj.rotation.y = powerUp.obj.rotation.y - 2 * Math.PI;
       }
       
-      // Calcular distancia al jugador
       const distance = powerUp.obj.position.distanceTo(player.position);
       
-      // Si la distancia es menor que 12, eliminar el power-up
       if (distance < 15) {
-          // Eliminar de la escena
           scene.remove(powerUp.obj);
           
-          // Eliminar del array
           powerUps.splice(i, 1);
           
           
-          // Aquí puedes agregar efectos de recolección
           if (powerUp.type == "heal"){
             playerHP = 100
           }
@@ -339,7 +319,7 @@ function update()
       setBodyYaw(player.body, getBodyYaw(player.body) - rotateAngle);
     }
 
-    // Vector forward del cuerpo físico (según rotación actual)
+    // Vector forward del cuerpo físico
     const forward = new CANNON.Vec3(
       Math.sin(getBodyYaw(player.body)),
       0,
@@ -366,13 +346,13 @@ function update()
       moveDir.scale(playerVelocity, moveDir);
     }
 
-    // Fijar velocidad (solo XZ)
+    // Fijar velocidad
     player.body.velocity.x = moveDir.x;
     player.body.velocity.z = moveDir.z;
     player.body.velocity.y = 0;
 
 
-    // Attack Player Push
+    // Ataque
     if (isAttackInProgress) {
       if (!isBatSwinging) {
           isBatSwinging = true;
@@ -381,17 +361,15 @@ function update()
     }
     // Animación del bate
     if (isBatThrusting && baseballBat) {
-      // Aumentar el progreso normalizado (0 → 1)
+      // Aumentar el progreso normalizado
       batThrustProgress += delta / batThrustDuration;
 
-      // Progresión tipo "ida y vuelta" (usamos sinusoide para suavizar)
       const t = Math.sin(Math.min(batThrustProgress, 1) * Math.PI);
 
       // Interpolar posición y rotación
       baseballBat.position.lerpVectors(batStartPos, batEndPos, t);
       baseballBat.rotation.x = THREE.MathUtils.lerp(batStartRotX, batEndRotX, t);
 
-      // Cuando termina la animación (ida y vuelta completa)
       if (batThrustProgress >= 1) {
           isBatThrusting = false;
           baseballBat.position.copy(batStartPos);
@@ -426,7 +404,7 @@ function update()
       
       attackTriggerPlayerPush.position.set(
           player.position.x + direction.x,
-          player.position.y + 2,  // Altura fija sobre el jugador
+          player.position.y + 2,
           player.position.z + direction.z
       );
     } else {
@@ -434,11 +412,9 @@ function update()
     }
 
 
-    // Sincronizar el Mesh con el cuerpo físico
     player.position.copy(player.body.position);
     player.quaternion.copy(player.body.quaternion);
 
-    // Sincronizar el Mesh con el cuerpo físico del zombi
     zombies.forEach(zombie => zombie.update(delta));
     
     
@@ -492,29 +468,24 @@ function render()
 	requestAnimationFrame( render );
 	update();
 	
-	// RENDERIZADO PRINCIPAL (vista normal)
 	renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
 	renderer.render(scene, camera);
 	
-	// NUEVO: RENDERIZADO DEL MINI MAPA
 	renderMiniMap();
 }
 
 function updateFlashLight() {
   if (!flashlight) return;
 
-  flashlightTime += delta; // delta = tiempo entre frames
+  flashlightTime += delta;
 
-  // --- Parpadeo suave normal ---
   const flicker = Math.sin(flashlightTime * 12) * 0.25 + (Math.random() - 0.5) * 0.15;
   flashlight.intensity = flashlightBaseIntensity + flicker;
   flashlight.intensity = Math.max(1.8, Math.min(3.0, flashlight.intensity));
 
-  // --- Variación de ángulo (temblor del haz) ---
   const angleBase = Math.PI / 5;
   const angleVariation = Math.sin(flashlightTime * 6) * 0.03 + (Math.random() - 0.5) * 0.01;
   flashlight.angle = angleBase + angleVariation;
 
-  // --- Penumbra más dinámica ---
   flashlight.penumbra = 0.5 + Math.abs(Math.sin(flashlightTime * 8)) * 0.3;
 }

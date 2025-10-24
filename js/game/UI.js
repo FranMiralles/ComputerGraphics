@@ -5,7 +5,7 @@ function renderMiniMap()
 	// Guardar el estado actual del renderer
 	renderer.clearDepth(); // Limpiar el buffer de profundidad
 	
-	// Configurar viewport para el mini mapa (esquina superior izquierda)
+	// Configurar viewport para el mini mapa
 	var x = 10; // Margen izquierdo
 	var y = window.innerHeight - miniMapSize - 10; // Margen superior
 	renderer.setViewport(x, y, miniMapSize, miniMapSize);

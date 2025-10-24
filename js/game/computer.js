@@ -59,7 +59,6 @@ function createServer({ position = { x: 0, y: 0, z: 0 }, scale = 1.0 }) {
   screenLight.position.set(0, rackHeight * 0.75, rackDepth / 2 + 0.1);
   group.add(screenLight);
 
-  // Añadir a escena
   if (scene) scene.add(group);
 
   const mass = 40 * scale;
